@@ -1,0 +1,37 @@
+import numpy as np
+
+# Hypothesis function
+def hypothesis(X, theta):
+    return X.dot(theta)
+
+# Cost function
+def compute_cost(X, y, theta):
+    m = len(y)
+    predictions = hypothesis(X, theta)
+    cost = (1 / (2 * m)) * np.sum((predictions - y) ** 2)
+    return cost
+
+# Gradient Descent function
+def gradient_descent(X, y, theta, alpha, iterations):
+    m = len(y)
+    for i in range(iterations):
+        # Update theta
+        theta = theta - (alpha / m) * (X.T.dot(hypothesis(X, theta) - y))
+        
+    return theta
+
+# Example usage
+# Input data (X) and output data (y)
+X = np.array([[1, 1], [1, 2], [1, 3]])  # Add a bias term (column of ones)
+y = np.array([1, 2, 3])
+
+# Initialize parameters
+theta = np.zeros(2)
+alpha = 0.01
+iterations = 1000
+
+# Perform Gradient Descent
+theta = gradient_descent(X, y, theta, alpha, iterations)
+
+# Final parameters after Gradient Descent
+print(f"Optimized parameters: {theta}")

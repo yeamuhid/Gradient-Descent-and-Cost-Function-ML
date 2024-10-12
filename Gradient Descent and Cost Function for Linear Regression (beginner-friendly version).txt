@@ -1,0 +1,51 @@
+import numpy as np
+
+# Function to calculate the hypothesis (predicted values)
+def hypothesis(X, theta):
+    return X.dot(theta)  # Multiply input matrix X with parameters theta
+
+# Function to calculate the cost (how far predictions are from actual values)
+def compute_cost(X, y, theta):
+    m = len(y)  # Number of training examples
+    predictions = hypothesis(X, theta)  # Predicted values (y_hat)
+    errors = predictions - y  # Difference between predictions and actual values
+    cost = (1 / (2 * m)) * np.sum(errors ** 2)  # Mean Squared Error
+    return cost
+
+# Gradient Descent function to update parameters (theta)
+def gradient_descent(X, y, theta, alpha, iterations):
+    m = len(y)  # Number of training examples
+    
+    # Loop for a number of iterations to minimize the cost
+    for i in range(iterations):
+        predictions = hypothesis(X, theta)  # Predicted values (y_hat)
+        errors = predictions - y  # Difference between predictions and actual values
+        
+        # Update theta: subtract the gradient scaled by learning rate alpha
+        gradient = (1 / m) * X.T.dot(errors)  # Gradient of the cost function
+        theta = theta - alpha * gradient  # Update rule for theta
+        
+        # Print cost every 100 iterations to see progress
+        if i % 100 == 0:
+            print(f"Iteration {i}, Cost: {compute_cost(X, y, theta)}")
+    
+    return theta  # Return the optimized parameters
+
+# Example usage:
+
+# Input data (X - features), where the first column is all 1s (bias term)
+X = np.array([[1, 1], [1, 2], [1, 3]])  # Adding a bias term (column of 1s)
+y = np.array([1, 2, 3])  # Actual output values (targets)
+
+# Initialize parameters (theta) to zeros
+theta = np.zeros(2)
+
+# Set learning rate (alpha) and number of iterations
+alpha = 0.1
+iterations = 1000
+
+# Run Gradient Descent to optimize theta
+theta = gradient_descent(X, y, theta, alpha, iterations)
+
+# Print the final parameters (theta) after gradient descent
+print(f"Optimized parameters: {theta}")

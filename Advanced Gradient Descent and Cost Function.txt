@@ -1,0 +1,75 @@
+import numpy as np
+
+class LinearRegressionGD:
+    def __init__(self, alpha=0.01, iterations=1000):
+        self.alpha = alpha  # Learning rate
+        self.iterations = iterations  # Number of iterations
+        self.theta = None  # Parameters (weights)
+        self.cost_history = []  # To store the cost at each iteration
+
+    # Method to compute the cost function (Mean Squared Error)
+    def compute_cost(self, X, y):
+        m = len(y)
+        predictions = X.dot(self.theta)  # Vectorized hypothesis
+        errors = predictions - y
+        cost = (1 / (2 * m)) * np.sum(errors ** 2)  # Mean Squared Error
+        return cost
+
+    # Method to perform Gradient Descent
+    def gradient_descent(self, X, y):
+        m = len(y)
+        self.cost_history = []
+        
+        for i in range(self.iterations):
+            # Calculate the gradient
+            predictions = X.dot(self.theta)
+            gradient = (1 / m) * X.T.dot(predictions - y)
+            
+            # Update theta
+            self.theta -= self.alpha * gradient
+            
+            # Save the cost for each iteration
+            cost = self.compute_cost(X, y)
+            self.cost_history.append(cost)
+            
+            # Optional: print cost every 100 iterations
+            if i % 100 == 0:
+                print(f"Iteration {i}: Cost {cost}")
+    
+    # Fit the model (train using Gradient Descent)
+    def fit(self, X, y):
+        X = np.c_[np.ones((X.shape[0], 1)), X]  # Add a bias term (column of ones)
+        self.theta = np.zeros(X.shape[1])  # Initialize parameters (theta)
+        self.gradient_descent(X, y)  # Perform gradient descent
+
+    # Make predictions using the trained model
+    def predict(self, X):
+        X = np.c_[np.ones((X.shape[0], 1)), X]  # Add a bias term (column of ones)
+        return X.dot(self.theta)  # Return predictions
+
+# Example usage:
+if __name__ == "__main__":
+    # Generate some sample data (simple linear relationship y = 2x + 1)
+    X = np.array([[1], [2], [3], [4], [5]])  # Feature (independent variable)
+    y = np.array([3, 5, 7, 9, 11])  # Target values (dependent variable)
+
+    # Create the model
+    model = LinearRegressionGD(alpha=0.01, iterations=1000)
+
+    # Train the model (fit the data)
+    model.fit(X, y)
+
+    # Output optimized parameters (theta)
+    print(f"Optimized parameters (theta): {model.theta}")
+
+    # Make predictions
+    predictions = model.predict(np.array([[6], [7]]))
+    print(f"Predictions for X = [6, 7]: {predictions}")
+
+    # Optional: Plot cost history over iterations (requires matplotlib)
+    import matplotlib.pyplot as plt
+    plt.plot(range(model.iterations), model.cost_history)
+    plt.xlabel('Iterations')
+    plt.ylabel('Cost')
+    plt.title('Cost Function Over Iterations')
+    plt.show()
